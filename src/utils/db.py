@@ -5,6 +5,19 @@ from datetime import datetime
 # Global variable to store the database file path
 DB_FILE_PATH = ''
 
+
+def check_db_existence():
+    global DB_FILE_PATH
+    home_dir = os.path.expanduser("~")
+    DB_FILE_PATH = os.path.join(home_dir, 'pymodoro.db')
+
+    if not os.path.exists(DB_FILE_PATH):
+        print("Database does not exist. Setting up the database.")
+        setupdb()
+    else:
+        print("Database already exists.")
+
+
 def setupdb():
     global DB_FILE_PATH
     home_dir = os.path.expanduser("~")
@@ -69,6 +82,7 @@ def insert_pomodoro(start, stop, duration, category, sub_category):
     conn.commit()
     conn.close()
 
+
 def insert_pause(start, stop, duration, category):
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
@@ -78,7 +92,8 @@ def insert_pause(start, stop, duration, category):
     ''', (start, stop, duration, category))
     conn.commit()
     conn.close()
-    
+
+
 def insert_config(option, value):
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
@@ -88,7 +103,8 @@ def insert_config(option, value):
     ''', (option, value))
     conn.commit()
     conn.close()
-    
+
+
 def insert_random_pause_category(category, daily_limit):
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
@@ -98,7 +114,8 @@ def insert_random_pause_category(category, daily_limit):
     ''', (category, daily_limit))
     conn.commit()
     conn.close()
-    
+
+
 def insert_obiettivi(nickname, days, target):
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
@@ -108,7 +125,7 @@ def insert_obiettivi(nickname, days, target):
     ''', (nickname, days, target))
     conn.commit()
     conn.close()
-    
+
 
 # # Call the setupdb function to initialize the database
 # setupdb()
