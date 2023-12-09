@@ -15,7 +15,7 @@ def check_db_existence():
         print("Database does not exist. Setting up the database.")
         setupdb()
     else:
-        print("Database already exists.")
+        print("Database ({DB_FILE_PATH}) already exists.")
 
 
 def setupdb():
