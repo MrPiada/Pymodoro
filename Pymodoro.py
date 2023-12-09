@@ -4,19 +4,24 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
 from src.dashboard.style import *
+from src.dashboard.timer import *
+from src.dashboard.stats import *
+from src.dashboard.config import *
+
 from src.Pomodoro import *
 
-print(POMODORO)
-POMODORO = Pomodoro(TimerType.POMODORO, 12)
-print(f"\nduration: {POMODORO.duration}\n")
-POMODORO.stop()
+
+# print(POMODORO)
+# POMODORO = Pomodoro(TimerType.POMODORO, 12)
+# print(f"\nduration: {POMODORO.duration}\n")
+# POMODORO.stop()
 
 
 app = dash.Dash(
     __name__,
     external_stylesheets=[
         dbc.themes.SKETCHY],
-    title='Pymodoro'
+    title='PyModoro'
 )
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
@@ -50,15 +55,15 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 def render_page_content(pathname):
     if pathname == "/":
         return html.Div(children=[
-            html.H1("Timer"),
+            timer_tab
         ]),
     elif pathname == "/stats":
         return html.Div(children=[
-            html.H1("Stats"),
+            stats_tab
         ]),
     elif pathname == "/config":
         return html.Div(children=[
-            html.H1("Config"),
+            config_tab
         ]),
     return html.Div(
         [
