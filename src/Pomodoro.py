@@ -4,21 +4,23 @@ from enum import Enum
 
 POMODORO = None
 
+
 class TimerType(Enum):
     POMODORO = 1
     BREAK = 1
     LONG_BREAK = 2
 
+
 class Pomodoro:
     def __init__(self, timer_type, duration):
-        self._duration = duration # seconds
+        self._duration = duration  # seconds
         self.timer_type = timer_type
         self.timer_thread = None
         self.stop_timer = False
         self.lock = threading.Lock()
-        
+
         self.__start()
-        
+
     @property
     def duration(self):
         with self.lock:
@@ -42,4 +44,3 @@ class Pomodoro:
             time.sleep(1)
             self._duration -= 1
         print(f"End of timer")
-
