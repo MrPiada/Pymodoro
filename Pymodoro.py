@@ -10,17 +10,9 @@ from src.dashboard.stats import *
 from src.dashboard.config import *
 from src.utils.db import *
 
-from src.Pomodoro import *
-
-
-# print(POMODORO)
-# POMODORO = Pomodoro(TimerType.POMODORO, 12)
-# print(f"\nduration: {POMODORO.duration}\n")
-# POMODORO.stop()
-
 # Call the setupdb function to initialize the database
 setupdb()
-insert_log("INFO", "STARTUP")
+log("INFO", "STARTUP")
 
 # # Example usage:
 # insert_pomodoro(

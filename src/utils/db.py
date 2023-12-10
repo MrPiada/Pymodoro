@@ -125,7 +125,7 @@ def insert_obiettivi(nickname, days, target):
     conn.commit()
     conn.close()
     
-def insert_log(severity, message):
+def log(severity, message):
     calling_function = inspect.currentframe().f_back.f_code.co_name
 
     conn = sqlite3.connect(DB_FILE_PATH)
