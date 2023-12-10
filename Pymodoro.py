@@ -7,6 +7,7 @@ from src.dashboard.style import *
 from src.dashboard.timer import *
 from src.dashboard.stats import *
 from src.dashboard.config import *
+from src.utils.db import *
 
 from src.Pomodoro import *
 
@@ -15,6 +16,22 @@ from src.Pomodoro import *
 # POMODORO = Pomodoro(TimerType.POMODORO, 12)
 # print(f"\nduration: {POMODORO.duration}\n")
 # POMODORO.stop()
+
+# Call the setupdb function to initialize the database
+setupdb()
+
+# # Example usage:
+# insert_pomodoro(
+#     "13:02 8/12/2023",
+#     "13:27 8/12/2023",
+#     25,
+#     "Issue",
+#     "#321 pelloide")
+# insert_pause("13:02 8/12/2023", "13:17 8/12/2023", 15, "coffe")
+# insert_config("username", "Ciccio")
+# insert_random_pause_category("scacchi", 3)
+# insert_random_pause_category("reading", 5)
+# insert_obiettivi("daily", 1, 10)
 
 
 app = dash.Dash(
