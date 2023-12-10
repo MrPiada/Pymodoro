@@ -47,6 +47,7 @@ class Pomodoro:
         with self.lock:
             self.stop_timer = True
         log("INFO", f"Stop pomodoro ({self})")
+        update_pomodoro_stop_time(self.db_id)
 
     def _run_timer(self):
         while self.duration > 0 and not self.stop_timer:

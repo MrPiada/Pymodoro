@@ -89,6 +89,20 @@ def insert_pomodoro(duration, category, sub_category):
     
     return last_row_id
 
+def update_pomodoro_stop_time(pomodoro_id):
+    stop = time.strftime('%Y-%m-%d %H:%M:%S')
+    
+    conn = sqlite3.connect(DB_FILE_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+    UPDATE pomodori
+    SET stop = ?
+    WHERE id = ?
+    ''', (stop, pomodoro_id))
+    
+    conn.commit()
+    conn.close()
+
 
 def insert_pause(start, stop, duration, category):
     conn = sqlite3.connect(DB_FILE_PATH)
