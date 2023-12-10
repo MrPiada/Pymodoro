@@ -1,10 +1,11 @@
 import os
 import sqlite3
-from datetime import datetime
+import time
 import inspect
 
 # Global variable to store the database file path
 DB_FILE_PATH = ''
+
 
 def setupdb():
     global DB_FILE_PATH
@@ -30,7 +31,8 @@ def setupdb():
         start TEXT,
         stop TEXT,
         duration INTEGER,
-        category TEXT
+        category TEXT,
+        pause_type TEXT
     )
     ''')
 
@@ -57,7 +59,7 @@ def setupdb():
         target INTEGER
     )
     ''')
-    
+
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS logging (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,24 +73,78 @@ def setupdb():
     conn.close()
 
 
-def insert_pomodoro(start, stop, duration, category, sub_category):
+def insert_pomodoro(duration, category, sub_category):
+    start = time.strftime('%Y-%m-%d %H:%M:%S')
+    stop = time.strftime(
+        '%Y-%m-%d %H:%M:%S',
+        time.localtime(
+            time.time() +
+            duration))
+
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
     cursor.execute('''
     INSERT INTO pomodori (start, stop, duration, category, sub_category)
     VALUES (?, ?, ?, ?, ?)
     ''', (start, stop, duration, category, sub_category))
+
+    last_row_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
+    return last_row_id
+
+
+def insert_pause(duration, category, pause_type):
+    start = time.strftime('%Y-%m-%d %H:%M:%S')
+    stop = time.strftime(
+        '%Y-%m-%d %H:%M:%S',
+        time.localtime(
+            time.time() +
+            duration))
+
+    conn = sqlite3.connect(DB_FILE_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+    INSERT INTO pauses (start, stop, duration, category, pause_type)
+    VALUES (?, ?, ?, ?, ?)
+    ''', (start, stop, duration, category, pause_type))
+
+    last_row_id = cursor.lastrowid
+
+    conn.commit()
+    conn.close()
+
+    return last_row_id
+
+
+def update_pomodoro_stop_time(pomodoro_id):
+    stop = time.strftime('%Y-%m-%d %H:%M:%S')
+
+    conn = sqlite3.connect(DB_FILE_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+    UPDATE pomodori
+    SET stop = ?
+    WHERE id = ?
+    ''', (stop, pomodoro_id))
+
     conn.commit()
     conn.close()
 
 
-def insert_pause(start, stop, duration, category):
+def update_pause_stop_time(pomodoro_id):
+    stop = time.strftime('%Y-%m-%d %H:%M:%S')
+
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
     cursor.execute('''
-    INSERT INTO pauses (start, stop, duration, category)
-    VALUES (?, ?, ?, ?)
-    ''', (start, stop, duration, category))
+    UPDATE pauses
+    SET stop = ?
+    WHERE id = ?
+    ''', (stop, pomodoro_id))
+
     conn.commit()
     conn.close()
 
@@ -124,8 +180,9 @@ def insert_obiettivi(nickname, days, target):
     ''', (nickname, days, target))
     conn.commit()
     conn.close()
-    
-def insert_log(severity, message):
+
+
+def log(severity, message):
     calling_function = inspect.currentframe().f_back.f_code.co_name
 
     conn = sqlite3.connect(DB_FILE_PATH)
