@@ -3,6 +3,7 @@ from dash import html, dcc
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
+from src.dashboard.callbacks import get_callbacks
 from src.dashboard.style import *
 from src.dashboard.timer import *
 from src.dashboard.stats import *
@@ -38,7 +39,8 @@ insert_log("INFO", "STARTUP")
 app = dash.Dash(
     __name__,
     external_stylesheets=[
-        dbc.themes.SKETCHY],
+        dbc.themes.SKETCHY,
+        dbc.icons.BOOTSTRAP],
     title='PyModoro'
 )
 
@@ -68,9 +70,10 @@ sidebar = html.Div([html.H2("PyModoro",
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
+get_callbacks(app)
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page_content(pathname):   
+def render_page_content(pathname):
     if pathname == "/":
         return html.Div(children=[
             timer_tab
