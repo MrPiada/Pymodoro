@@ -4,6 +4,7 @@ from src.dashboard.widgets.timer_button import *
 from src.Pomodoro import *
 from src.utils.db import *
 
+
 def get_callbacks(app):
     @app.callback(
         Output("play-icon", "className"),
@@ -16,5 +17,6 @@ def get_callbacks(app):
             POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            POMODORO = Pomodoro(TimerType.POMODORO, 20, "DummyCategory")
-            return "bi bi-stop-circle-fill"        
+            selected_timer = TimerType.PAUSE
+            POMODORO = Pomodoro(selected_timer, 20, "DummyCategory")
+            return "bi bi-stop-circle-fill"

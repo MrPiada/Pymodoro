@@ -9,12 +9,13 @@ POMODORO = None
 
 class TimerType(Enum):
     POMODORO = 1
-    PAUSE = 1
-    LONG_PAUSE = 2
+    PAUSE = 2
+    LONG_PAUSE = 3
 
 
 class Pomodoro:
     def __init__(self, timer_type, duration, category, sub_category=None):
+        print(timer_type)
         self._duration = duration  # seconds
         self.timer_type = timer_type
         self.timer_thread = None
@@ -36,18 +37,30 @@ class Pomodoro:
 
     def __start(self):
         log("INFO", f"Start pomodoro ({self})")
-        self.db_id = insert_pomodoro(
-            25,
-            self.category,
-            self.sub_category)
-        self.timer_thread = threading.Thread(target=self._run_timer)
-        self.timer_thread.start()
+        if self.timer_type == TimerType.POMODORO:
+            self.db_id = insert_pomodoro(
+                self._duration,
+                self.category,
+                self.sub_category)
+            self.timer_thread = threading.Thread(target=self._run_timer)
+            self.timer_thread.start()
+        else:
+            self.db_id = insert_pause(
+                self._duration,
+                self.category,
+                self.timer_type.name)
+            self.timer_thread = threading.Thread(target=self._run_timer)
+            self.timer_thread.start()
 
     def stop(self):
         with self.lock:
             self.stop_timer = True
         log("INFO", f"Stop pomodoro ({self})")
-        update_pomodoro_stop_time(self.db_id)
+
+        if self.timer_type == TimerType.POMODORO:
+            update_pomodoro_stop_time(self.db_id)
+        else:
+            update_pause_stop_time(self.db_id)
 
     def _run_timer(self):
         while self.duration > 0 and not self.stop_timer:
