@@ -9,22 +9,25 @@ POMODORO = None
 
 class TimerType(Enum):
     POMODORO = 1
-    BREAK = 1
-    LONG_BREAK = 2
+    PAUSE = 1
+    LONG_PAUSE = 2
 
 
 class Pomodoro:
-    def __init__(self, timer_type, duration):
+    def __init__(self, timer_type, duration, category, sub_category=None):
         self._duration = duration  # seconds
         self.timer_type = timer_type
         self.timer_thread = None
         self.stop_timer = False
+        self.category = category
+        self.sub_category = sub_category
+        self.db_id = None
         self.lock = threading.Lock()
 
         self.__start()
 
     def __str__(self):
-        return f"Pomodoro(timer_type={self.timer_type.name}, duration={self._duration}s)"
+        return f"Pomodoro(timer_type={self.timer_type.name}, duration={self._duration}s, category={self.category}, sub_category={self.sub_category})"
 
     @property
     def duration(self):
@@ -33,12 +36,10 @@ class Pomodoro:
 
     def __start(self):
         log("INFO", f"Start pomodoro ({self})")
-        insert_pomodoro(
-            "13:02 8/12/2023",
-            "13:27 8/12/2023",
+        self.db_id = insert_pomodoro(
             25,
-            "Issue",
-            "#321 pelloide")
+            self.category,
+            self.sub_category)
         self.timer_thread = threading.Thread(target=self._run_timer)
         self.timer_thread.start()
 

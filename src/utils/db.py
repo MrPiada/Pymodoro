@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from datetime import datetime
+import time
 import inspect
 
 # Global variable to store the database file path
@@ -71,15 +71,23 @@ def setupdb():
     conn.close()
 
 
-def insert_pomodoro(start, stop, duration, category, sub_category):
+def insert_pomodoro(duration, category, sub_category):
+    start = time.strftime('%Y-%m-%d %H:%M:%S')
+    stop = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + duration))
+    
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
     cursor.execute('''
     INSERT INTO pomodori (start, stop, duration, category, sub_category)
     VALUES (?, ?, ?, ?, ?)
     ''', (start, stop, duration, category, sub_category))
+    
+    last_row_id = cursor.lastrowid
+    
     conn.commit()
     conn.close()
+    
+    return last_row_id
 
 
 def insert_pause(start, stop, duration, category):

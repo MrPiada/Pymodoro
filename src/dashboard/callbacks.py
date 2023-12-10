@@ -16,5 +16,5 @@ def get_callbacks(app):
             POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            POMODORO = Pomodoro(TimerType.POMODORO, 20)
+            POMODORO = Pomodoro(TimerType.POMODORO, 20, "DummyCategory")
             return "bi bi-stop-circle-fill"        
