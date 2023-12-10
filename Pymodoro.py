@@ -19,6 +19,7 @@ from src.Pomodoro import *
 
 # Call the setupdb function to initialize the database
 setupdb()
+insert_log("INFO", "STARTUP")
 
 # # Example usage:
 # insert_pomodoro(
@@ -69,7 +70,7 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page_content(pathname):
+def render_page_content(pathname):   
     if pathname == "/":
         return html.Div(children=[
             timer_tab

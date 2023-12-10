@@ -1,24 +1,15 @@
 import os
 import sqlite3
 from datetime import datetime
+import inspect
 
 # Global variable to store the database file path
 DB_FILE_PATH = ''
-
-
-def check_db_existence():
-    if not os.path.exists(DB_FILE_PATH):
-        print("Database does not exist. Setting up the database.")
-        setupdb()
-    else:
-        print(f"Database ({DB_FILE_PATH}) already exists.")
-
 
 def setupdb():
     global DB_FILE_PATH
     home_dir = os.path.expanduser("~")
     DB_FILE_PATH = os.path.join(home_dir, 'pymodoro.db')
-    check_db_existence()
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()
 
@@ -64,6 +55,16 @@ def setupdb():
         nickname TEXT PRIMARY KEY,
         days INTEGER,
         target INTEGER
+    )
+    ''')
+    
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS logging (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        severity TEXT,
+        function_name TEXT,
+        message TEXT
     )
     ''')
 
@@ -121,5 +122,17 @@ def insert_obiettivi(nickname, days, target):
     INSERT OR REPLACE INTO obiettivi (nickname, days, target)
     VALUES (?, ?, ?)
     ''', (nickname, days, target))
+    conn.commit()
+    conn.close()
+    
+def insert_log(severity, message):
+    calling_function = inspect.currentframe().f_back.f_code.co_name
+
+    conn = sqlite3.connect(DB_FILE_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+    INSERT INTO logging (severity, function_name, message)
+    VALUES (?, ?, ?)
+    ''', (severity, calling_function, message))
     conn.commit()
     conn.close()
