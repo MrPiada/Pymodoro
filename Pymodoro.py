@@ -72,6 +72,7 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 get_callbacks(app)
 
+
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
