@@ -16,7 +16,8 @@ class TimerType(Enum):
 class Pomodoro:
     def __init__(self, timer_type, duration, category, sub_category=None):
         print(timer_type)
-        self._duration = duration  # seconds
+        self.initial_duration = duration  # seconds
+        self._duration = duration
         self.timer_type = timer_type
         self.timer_thread = None
         self.stop_timer = False
@@ -34,6 +35,10 @@ class Pomodoro:
     def duration(self):
         with self.lock:
             return self._duration
+
+    @property
+    def initial_durationduration(self):
+        return self.initial_duration
 
     def __start(self):
         log("INFO", f"Start pomodoro ({self})")
