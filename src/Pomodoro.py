@@ -40,6 +40,9 @@ class Pomodoro:
     def initial_durationduration(self):
         return self.initial_duration
 
+    def is_ticking(self):
+        return self._duration > 0
+
     def __start(self):
         log("INFO", f"Start pomodoro ({self})")
         if self.timer_type == TimerType.POMODORO:
@@ -60,6 +63,8 @@ class Pomodoro:
     def stop(self):
         with self.lock:
             self.stop_timer = True
+
+        self._duration = 0
         log("INFO", f"Stop pomodoro ({self})")
 
         if self.timer_type == TimerType.POMODORO:
@@ -74,3 +79,5 @@ class Pomodoro:
             print(timeformat, end='\r')
             time.sleep(1)
             self._duration -= 1
+            if self._duration <= 0:
+                self._duration = 0
