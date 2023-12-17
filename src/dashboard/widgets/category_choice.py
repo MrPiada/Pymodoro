@@ -1,7 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc
 
-CATEGORIES = ["pippo", "ciccio", 'piada', 'new category']
+NEW_CATEGORY = '+ ADD NEW CATEGORY'
+CATEGORIES = ["pippo", "ciccio", 'piada', NEW_CATEGORY]
 
 modal_new_category = html.Div(
     [
