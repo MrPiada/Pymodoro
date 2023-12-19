@@ -16,7 +16,7 @@ def get_callbacks(app):
         State('selected-category', 'data'),
         prevent_initial_call=True,
     )
-    def toggle_play(n_clicks, selected_category):        
+    def toggle_play(n_clicks, selected_category):
         global POMODORO
         is_ticking = False
         if POMODORO is not None:
@@ -26,10 +26,10 @@ def get_callbacks(app):
             POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            selected_timer = TimerType.PAUSE # TODO: switch between pomodori and pauses
+            selected_timer = TimerType.PAUSE  # TODO: switch between pomodori and pauses
             POMODORO = Pomodoro(selected_timer, 20, selected_category)
             return "bi bi-stop-circle-fill"
-        
+
     # Callback per disabilitare il pulsante quando selected_category è None
     @app.callback(
         Output("timer-button", "disabled"),
@@ -121,7 +121,7 @@ def get_callbacks(app):
             existing_values = [
                 val for val in drop_value if val != NEW_CATEGORY]
             return not is_open, drop_options, existing_values
-        
+
     @app.callback(
         Output('selected-category', 'data'),
         Input('category-dropdown', 'value')
