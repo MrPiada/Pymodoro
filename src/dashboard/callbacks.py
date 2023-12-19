@@ -76,6 +76,9 @@ def get_callbacks(app):
             drop_options,
             input_value,
             is_open):
+
+        global CATEGORIES
+
         # which component has triggered the callback?
         trigger = ctx.triggered_id
 
@@ -95,6 +98,10 @@ def get_callbacks(app):
             new_options.insert(-1, input_value)
             new_values = [val for val in drop_value if val != NEW_CATEGORY]
             new_values.append(input_value)
+
+            if input_value not in CATEGORIES:
+                CATEGORIES.insert(-1, input_value)
+
             return not is_open, new_options, new_values
 
         # cancel button has been clicked
