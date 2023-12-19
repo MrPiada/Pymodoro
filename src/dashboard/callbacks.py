@@ -1,19 +1,22 @@
 import datetime
-from dash.dependencies import Input, Output
-from src.dashboard.widgets.timer_button import *
+from dash import Input, Output, State, ctx
 
 from src.Pomodoro import *
 from src.utils.db import *
+
+from src.dashboard.widgets.timer_button import *
 from src.dashboard.widgets.timer_countdown import *
+from src.dashboard.widgets.category_choice import *
 
 
 def get_callbacks(app):
     @app.callback(
         Output("play-icon", "className", allow_duplicate=True),
         Input("timer-button", "n_clicks"),
+        State('selected-category', 'data'),
         prevent_initial_call=True,
     )
-    def toggle_play(n_clicks):
+    def toggle_play(n_clicks, selected_category):        
         global POMODORO
         is_ticking = False
         if POMODORO is not None:
@@ -23,9 +26,18 @@ def get_callbacks(app):
             POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            selected_timer = TimerType.PAUSE
-            POMODORO = Pomodoro(selected_timer, 20, "DummyCategory")
+            selected_timer = TimerType.PAUSE # TODO: switch between pomodori and pauses
+            POMODORO = Pomodoro(selected_timer, 20, selected_category)
             return "bi bi-stop-circle-fill"
+        
+    # Callback per disabilitare il pulsante quando selected_category è None
+    @app.callback(
+        Output("timer-button", "disabled"),
+        [Input('selected-category', 'data')],
+        prevent_initial_call=True,
+    )
+    def disable_button(selected_category):
+        return selected_category is None
 
     @app.callback(
         [Output('timer-display', 'children'),
@@ -54,3 +66,65 @@ def get_callbacks(app):
             return f'{remaining_time}', progress_percentage, icon
         else:
             return 0, None, "bi bi-play-circle-fill"
+
+    @app.callback(
+        Output("category-choice-modal", "is_open"),
+        Output("category-dropdown", 'options'),
+        Output("category-dropdown", 'value'),
+        Input("category-ok", "n_clicks"),
+        Input("category-cancel", "n_clicks"),
+        Input("category-dropdown", "value"),
+        State("category-dropdown", "options"),
+        State("category-name-input", 'value'),
+        State("category-choice-modal", "is_open"),
+        prevent_initial_call=True
+    )
+    def toggle_modal(
+            ok,
+            cancel,
+            drop_value,
+            drop_options,
+            input_value,
+            is_open):
+
+        global CATEGORIES
+
+        # which component has triggered the callback?
+        trigger = ctx.triggered_id
+
+        # change of drop down value triggered
+        if trigger == 'category-dropdown':
+            if NEW_CATEGORY in drop_value:
+                # if 'new category', open modal
+                return not is_open, drop_options, drop_value
+            else:
+                # if not 'new category', do nothing
+                return is_open, drop_options, drop_value
+
+        # ok button has been clicked
+        if trigger == 'category-ok':
+            # ok has been clicked, update the drop-down options
+            new_options = [opt for opt in drop_options]
+            new_options.insert(-1, input_value)
+            new_values = [val for val in drop_value if val != NEW_CATEGORY]
+            new_values.append(input_value)
+
+            if input_value not in CATEGORIES:
+                CATEGORIES.insert(-1, input_value)
+
+            return not is_open, new_options, new_values
+
+        # cancel button has been clicked
+        if trigger == 'category-cancel':
+            # cancel has been clicked, do not change options but return already
+            # selected to drop down value
+            existing_values = [
+                val for val in drop_value if val != NEW_CATEGORY]
+            return not is_open, drop_options, existing_values
+        
+    @app.callback(
+        Output('selected-category', 'data'),
+        Input('category-dropdown', 'value')
+    )
+    def update_selected_category(selected_value):
+        return selected_value
