@@ -56,7 +56,7 @@ category_choice = dbc.Container(
                     options=CATEGORIES,
                     multi=False
                 ),
-                dcc.Store(id='selected-category')
+                dcc.Store(id='selected-category', data=None)
             ]
         ),
         dbc.Row(

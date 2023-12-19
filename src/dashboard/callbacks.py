@@ -16,9 +16,7 @@ def get_callbacks(app):
         State('selected-category', 'data'),
         prevent_initial_call=True,
     )
-    def toggle_play(n_clicks, selected_category):
-        print(f"\n\nselected_category: {selected_category}\n")
-        
+    def toggle_play(n_clicks, selected_category):        
         global POMODORO
         is_ticking = False
         if POMODORO is not None:
@@ -31,6 +29,15 @@ def get_callbacks(app):
             selected_timer = TimerType.PAUSE
             POMODORO = Pomodoro(selected_timer, 20, "DummyCategory")
             return "bi bi-stop-circle-fill"
+        
+    # Callback per disabilitare il pulsante quando selected_category è None
+    @app.callback(
+        Output("timer-button", "disabled"),
+        [Input('selected-category', 'data')],
+        prevent_initial_call=True,
+    )
+    def disable_button(selected_category):
+        return selected_category is None
 
     @app.callback(
         [Output('timer-display', 'children'),
