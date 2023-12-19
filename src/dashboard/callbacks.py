@@ -26,8 +26,8 @@ def get_callbacks(app):
             POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            selected_timer = TimerType.PAUSE
-            POMODORO = Pomodoro(selected_timer, 20, "DummyCategory")
+            selected_timer = TimerType.PAUSE # TODO: switch between pomodori and pauses
+            POMODORO = Pomodoro(selected_timer, 20, selected_category)
             return "bi bi-stop-circle-fill"
         
     # Callback per disabilitare il pulsante quando selected_category è None
