@@ -13,9 +13,12 @@ def get_callbacks(app):
     @app.callback(
         Output("play-icon", "className", allow_duplicate=True),
         Input("timer-button", "n_clicks"),
+        State('selected-category', 'data'),
         prevent_initial_call=True,
     )
-    def toggle_play(n_clicks):
+    def toggle_play(n_clicks, selected_category):
+        print(f"\n\nselected_category: {selected_category}\n")
+        
         global POMODORO
         is_ticking = False
         if POMODORO is not None:
@@ -59,12 +62,12 @@ def get_callbacks(app):
 
     @app.callback(
         Output("category-choice-modal", "is_open"),
-        Output("category-dropodown", 'options'),
-        Output("category-dropodown", 'value'),
+        Output("category-dropdown", 'options'),
+        Output("category-dropdown", 'value'),
         Input("category-ok", "n_clicks"),
         Input("category-cancel", "n_clicks"),
-        Input("category-dropodown", "value"),
-        State("category-dropodown", "options"),
+        Input("category-dropdown", "value"),
+        State("category-dropdown", "options"),
         State("category-name-input", 'value'),
         State("category-choice-modal", "is_open"),
         prevent_initial_call=True
@@ -83,7 +86,7 @@ def get_callbacks(app):
         trigger = ctx.triggered_id
 
         # change of drop down value triggered
-        if trigger == 'category-dropodown':
+        if trigger == 'category-dropdown':
             if NEW_CATEGORY in drop_value:
                 # if 'new category', open modal
                 return not is_open, drop_options, drop_value
@@ -111,3 +114,10 @@ def get_callbacks(app):
             existing_values = [
                 val for val in drop_value if val != NEW_CATEGORY]
             return not is_open, drop_options, existing_values
+        
+    @app.callback(
+        Output('selected-category', 'data'),
+        Input('category-dropdown', 'value')
+    )
+    def update_selected_category(selected_value):
+        return selected_value

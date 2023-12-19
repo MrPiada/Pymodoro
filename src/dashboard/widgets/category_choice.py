@@ -52,10 +52,11 @@ category_choice = dbc.Container(
         dbc.Row(
             [
                 dcc.Dropdown(
-                    id="category-dropodown",
+                    id="category-dropdown",
                     options=CATEGORIES,
                     multi=False
-                )
+                ),
+                dcc.Store(id='selected-category')
             ]
         ),
         dbc.Row(
