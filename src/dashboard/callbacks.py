@@ -43,7 +43,8 @@ def get_callbacks(app):
         [Output('timer-display', 'children'),
          Output('progress-bar', 'value'),
          Output("play-icon", "className", allow_duplicate=True),
-         Output("timer-button", "disabled", allow_duplicate=True)],
+         Output("timer-button", "disabled", allow_duplicate=True),
+         Output("category-dropdown", "disabled", allow_duplicate=True)],
         Input('interval-component', 'n_intervals'),
         State("timer-button", "disabled"),
         prevent_initial_call=True,
@@ -52,6 +53,7 @@ def get_callbacks(app):
         global POMODORO
         is_ticking = False
         disable_button = button_disabled_state
+        disable_category_dropdown = False
         if POMODORO is not None:
             remaining_seconds = POMODORO.duration
             initial_seconds = POMODORO.initial_duration
@@ -66,10 +68,11 @@ def get_callbacks(app):
             if is_ticking:
                 icon = "bi bi-stop-circle-fill"
                 disable_button = False
+                disable_category_dropdown = True
 
-            return f'{remaining_time}', progress_percentage, icon, disable_button
+            return f'{remaining_time}', progress_percentage, icon, disable_button, disable_category_dropdown
         else:
-            return 0, None, "bi bi-play-circle-fill", disable_button
+            return 0, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown
 
     @app.callback(
         Output("category-choice-modal", "is_open"),
