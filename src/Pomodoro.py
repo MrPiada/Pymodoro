@@ -29,11 +29,7 @@ class Pomodoro:
         self.__start()
 
     def __str__(self):
-        return f"Pomodoro(timer_type={
-            self.timer_type.name}, duration={
-            self._duration}s, category={
-            self.category}, sub_category={
-                self.sub_category})"
+        return f"Pomodoro(timer_type={self.timer_type.name}, duration={ self._duration}s, category={self.category}, sub_category={ self.sub_category})"
 
     @property
     def duration(self):
