@@ -136,3 +136,36 @@ def get_callbacks(app):
     )
     def update_selected_category(selected_value):
         return selected_value
+
+    @app.callback(
+        [
+            Output('obiettivo-giornaliero', 'children'),
+            Output('obiettivo-giornaliero', 'style'),
+            Output('obiettivo-settimanale', 'children'),
+            Output('obiettivo-settimanale', 'style')
+        ],
+        [
+            Input('obiettivo-giornaliero', 'children'),
+            Input('obiettivo-settimanale', 'children')
+        ]
+    )
+    def update_obiettivo(d, w):
+        # Simula la logica del programma per ottenere il valore dell'obiettivo
+        obiettivo_giornaliero = "30/10"
+        obiettivo_settimanale = "180/35"
+        day_c = {'color': 'green'}
+        week_c = {'color': 'green'}
+        try:
+            obiettivo_giornaliero, totale_day = map(int, obiettivo_giornaliero.split('/'))
+            obiettivo_settimanale, totale_week = map(int, obiettivo_settimanale.split('/'))
+
+            if obiettivo_giornaliero >= totale_day:
+                day_c = {'color': 'green'}
+            if obiettivo_settimanale >= totale_week:
+                week_c = {'color': 'green'}
+        except Exception as e:
+            print(str(e))
+            return obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
+        
+        return obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
+        

@@ -193,3 +193,32 @@ def log(severity, message):
     ''', (severity, calling_function, message))
     conn.commit()
     conn.close()
+    
+    
+def count_past_pomodori():
+    conn = sqlite3.connect(DB_FILE_PATH)
+    cursor = conn.cursor()
+
+    # Conta le righe per la giornata di oggi
+    today_start = time.strftime('%Y-%m-%d 00:00:00')
+    today_stop = time.strftime('%Y-%m-%d 23:59:59')
+    cursor.execute('''
+        SELECT COUNT(*)
+        FROM pomodori
+        WHERE start BETWEEN ? AND ?
+    ''', (today_start, today_stop))
+    rows_today = cursor.fetchone()[0]
+
+    # Conta le righe per l'ultima settimana
+    last_week_start = time.strftime('%Y-%m-%d 00:00:00', time.localtime(time.time() - 7 * 24 * 60 * 60))
+    last_week_stop = time.strftime('%Y-%m-%d 23:59:59')
+    cursor.execute('''
+        SELECT COUNT(*)
+        FROM pomodori
+        WHERE start BETWEEN ? AND ?
+    ''', (last_week_start, last_week_stop))
+    rows_last_week = cursor.fetchone()[0]
+
+    conn.close()
+
+    return rows_today, rows_last_week
