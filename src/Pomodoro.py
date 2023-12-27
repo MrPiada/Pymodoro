@@ -21,8 +21,8 @@ class Pomodoro:
         self.timer_type = timer_type
         self.timer_thread = None
         self.stop_timer = False
-        self.category = category
-        self.sub_category = sub_category
+        self._category = category
+        self._sub_category = sub_category
         self.db_id = None
         self.lock = threading.Lock()
 
@@ -39,6 +39,14 @@ class Pomodoro:
     @property
     def initial_durationduration(self):
         return self.initial_duration
+    
+    @property
+    def category(self):
+        return self._category
+    
+    @property
+    def sub_category(self):
+        return self._sub_category
 
     def is_ticking(self):
         return self._duration > 0

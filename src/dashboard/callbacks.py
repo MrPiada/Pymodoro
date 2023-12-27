@@ -56,6 +56,7 @@ def get_callbacks(app):
         disable_category_dropdown = False
         if POMODORO is not None:
             remaining_seconds = POMODORO.duration
+            category = POMODORO.category
             initial_seconds = POMODORO.initial_duration
 
             remaining_time = str(datetime.timedelta(seconds=remaining_seconds))
@@ -70,7 +71,7 @@ def get_callbacks(app):
                 disable_button = False
                 disable_category_dropdown = True
 
-            return f'{remaining_time}', progress_percentage, icon, disable_button, disable_category_dropdown
+            return f'{category}: {remaining_time}', progress_percentage, icon, disable_button, disable_category_dropdown
         else:
             return 0, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown
 
