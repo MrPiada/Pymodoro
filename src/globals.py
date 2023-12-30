@@ -1,5 +1,9 @@
 NEW_CATEGORY = '+ ADD NEW CATEGORY'
 
+daily_target = 5
+weekly_target = 10
+
+
 class Globals:
     POMODORO = None
     POMODORI_TODAY = 0

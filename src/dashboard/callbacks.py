@@ -40,20 +40,38 @@ def get_callbacks(app):
         return selected_category is None
 
     @app.callback(
-        [Output('timer-display', 'children'),
-         Output('progress-bar', 'value'),
-         Output("play-icon", "className", allow_duplicate=True),
-         Output("timer-button", "disabled", allow_duplicate=True),
-         Output("category-dropdown", "disabled", allow_duplicate=True)],
+        [
+            Output('timer-display', 'children'),
+            Output('progress-bar', 'value'),
+            Output("play-icon", "className", allow_duplicate=True),
+            Output("timer-button", "disabled", allow_duplicate=True),
+            Output("category-dropdown", "disabled", allow_duplicate=True),
+            Output('obiettivo-giornaliero', 'children'),
+            Output('obiettivo-giornaliero', 'style'),
+            Output('obiettivo-settimanale', 'children'),
+            Output('obiettivo-settimanale', 'style')
+        ],
         Input('interval-component', 'n_intervals'),
         State("timer-button", "disabled"),
         prevent_initial_call=True,
     )
     def update_timer(n, button_disabled_state):
-        print(Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK)
         is_ticking = False
         disable_button = button_disabled_state
         disable_category_dropdown = False
+
+        day_c = {'color': 'orange'}
+        if Globals.POMODORI_TODAY >= daily_target:
+            day_c = {'color': 'green'}
+        obiettivo_giornaliero = str(
+            Globals.POMODORI_TODAY) + "/" + str(daily_target)
+
+        week_c = {'color': 'orange'}
+        if Globals.POMODORI_LAST_WEEK >= weekly_target:
+            week_c = {'color': 'green'}
+        obiettivo_settimanale = str(
+            Globals.POMODORI_LAST_WEEK) + "/" + str(weekly_target)
+
         if Globals.POMODORO is not None:
             remaining_seconds = Globals.POMODORO.duration
             category = Globals.POMODORO.category
@@ -70,10 +88,10 @@ def get_callbacks(app):
                 icon = "bi bi-stop-circle-fill"
                 disable_button = False
                 disable_category_dropdown = True
-
-            return f'{category}: {remaining_time}', progress_percentage, icon, disable_button, disable_category_dropdown
+            category_str = f'{category}: {remaining_time}'
+            return category_str, progress_percentage, icon, disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
         else:
-            return 0, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown
+            return 0, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
 
     @app.callback(
         Output("category-choice-modal", "is_open"),
@@ -134,34 +152,3 @@ def get_callbacks(app):
     )
     def update_selected_category(selected_value):
         return selected_value
-
-    @app.callback(
-        [
-            Output('obiettivo-giornaliero', 'children'),
-            Output('obiettivo-giornaliero', 'style'),
-            Output('obiettivo-settimanale', 'children'),
-            Output('obiettivo-settimanale', 'style')
-        ],
-        [
-            Input('obiettivo-giornaliero', 'children'),
-            Input('obiettivo-settimanale', 'children')
-        ]
-    )
-    def update_obiettivo(d, w):
-        day_c = {'color': 'green'}
-        week_c = {'color': 'green'}
-        
-        daily_target = 5
-        weekly_target = 10
-        
-        print(Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK)
-        if Globals.POMODORI_TODAY >= daily_target:
-            day_c = {'color': 'green'}
-        if Globals.POMODORI_LAST_WEEK >= weekly_target:
-            week_c = {'color': 'green'}
-        
-        obiettivo_giornaliero = str(Globals.POMODORI_TODAY) + "/" + str(daily_target)
-        obiettivo_settimanale = str(Globals.POMODORI_LAST_WEEK) + "/" + str(weekly_target)
-        
-        return obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
-        
