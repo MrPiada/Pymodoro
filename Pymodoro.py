@@ -70,7 +70,6 @@ get_callbacks(app)
 def render_page_content(pathname):
     if pathname == "/":
         Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK = count_past_pomodori()
-        print(Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK)
         return html.Div(children=[
             timer_tab
         ]),

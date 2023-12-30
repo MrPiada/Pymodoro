@@ -14,7 +14,6 @@ class TimerType(Enum):
 
 class Pomodoro:
     def __init__(self, timer_type, duration, category, sub_category=None):
-        print(timer_type)
         self.initial_duration = duration  # seconds
         self._duration = duration
         self.timer_type = timer_type
@@ -91,7 +90,6 @@ class Pomodoro:
         while self.duration > 0 and not self.stop_timer:
             mins, secs = divmod(self.duration, 1)
             timeformat = '{:02.0f}:{:02.0f}'.format(mins, secs * 60)
-            print(timeformat, end='\r')
             time.sleep(1)
             self._duration -= 1
             if self._duration <= 0:
