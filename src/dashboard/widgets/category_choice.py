@@ -1,8 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html, dcc
-
-NEW_CATEGORY = '+ ADD NEW CATEGORY'
-CATEGORIES = ["pippo", "ciccio", 'piada', NEW_CATEGORY]
+from src.globals import *
 
 modal_new_category = html.Div(
     [
@@ -53,7 +51,7 @@ category_choice = dbc.Container(
             [
                 dcc.Dropdown(
                     id="category-dropdown",
-                    options=CATEGORIES,
+                    options=Globals.CATEGORIES,
                     multi=False
                 ),
                 dcc.Store(id='selected-category', data=None)

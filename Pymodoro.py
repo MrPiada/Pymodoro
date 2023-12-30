@@ -9,6 +9,7 @@ from src.dashboard.timer import *
 from src.dashboard.stats import *
 from src.dashboard.config import *
 from src.utils.db import *
+from src.globals import *
 
 # Call the setupdb function to initialize the database
 setupdb()
@@ -68,6 +69,7 @@ get_callbacks(app)
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
+        Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK = count_past_pomodori()
         return html.Div(children=[
             timer_tab
         ]),

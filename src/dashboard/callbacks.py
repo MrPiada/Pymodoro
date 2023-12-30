@@ -3,6 +3,7 @@ from dash import Input, Output, State, ctx
 
 from src.Pomodoro import *
 from src.utils.db import *
+from src.globals import *
 
 from src.dashboard.widgets.timer_button import *
 from src.dashboard.widgets.timer_countdown import *
@@ -17,17 +18,16 @@ def get_callbacks(app):
         prevent_initial_call=True,
     )
     def toggle_play(n_clicks, selected_category):
-        global POMODORO
         is_ticking = False
-        if POMODORO is not None:
-            is_ticking = POMODORO.is_ticking()
+        if Globals.POMODORO is not None:
+            is_ticking = Globals.POMODORO.is_ticking()
 
         if is_ticking:
-            POMODORO.stop()
+            Globals.POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            selected_timer = TimerType.PAUSE  # TODO: switch between pomodori and pauses
-            POMODORO = Pomodoro(selected_timer, 20, selected_category)
+            selected_timer = TimerType.POMODORO  # TODO: switch between pomodori and pauses
+            Globals.POMODORO = Pomodoro(selected_timer, 20, selected_category)
             return "bi bi-stop-circle-fill"
 
     # Callback per disabilitare il pulsante quando selected_category è None
@@ -40,40 +40,58 @@ def get_callbacks(app):
         return selected_category is None
 
     @app.callback(
-        [Output('timer-display', 'children'),
-         Output('progress-bar', 'value'),
-         Output("play-icon", "className", allow_duplicate=True),
-         Output("timer-button", "disabled", allow_duplicate=True),
-         Output("category-dropdown", "disabled", allow_duplicate=True)],
+        [
+            Output('timer-display', 'children'),
+            Output('progress-bar', 'value'),
+            Output("play-icon", "className", allow_duplicate=True),
+            Output("timer-button", "disabled", allow_duplicate=True),
+            Output("category-dropdown", "disabled", allow_duplicate=True),
+            Output('obiettivo-giornaliero', 'children'),
+            Output('obiettivo-giornaliero', 'style'),
+            Output('obiettivo-settimanale', 'children'),
+            Output('obiettivo-settimanale', 'style')
+        ],
         Input('interval-component', 'n_intervals'),
         State("timer-button", "disabled"),
         prevent_initial_call=True,
     )
     def update_timer(n, button_disabled_state):
-        global POMODORO
         is_ticking = False
         disable_button = button_disabled_state
         disable_category_dropdown = False
-        if POMODORO is not None:
-            remaining_seconds = POMODORO.duration
-            category = POMODORO.category
-            initial_seconds = POMODORO.initial_duration
+
+        day_c = {'color': 'orange'}
+        if Globals.POMODORI_TODAY >= daily_target:
+            day_c = {'color': 'green'}
+        obiettivo_giornaliero = str(
+            Globals.POMODORI_TODAY) + "/" + str(daily_target)
+
+        week_c = {'color': 'orange'}
+        if Globals.POMODORI_LAST_WEEK >= weekly_target:
+            week_c = {'color': 'green'}
+        obiettivo_settimanale = str(
+            Globals.POMODORI_LAST_WEEK) + "/" + str(weekly_target)
+
+        if Globals.POMODORO is not None:
+            remaining_seconds = Globals.POMODORO.duration
+            category = Globals.POMODORO.category
+            initial_seconds = Globals.POMODORO.initial_duration
 
             remaining_time = str(datetime.timedelta(seconds=remaining_seconds))
 
             progress_percentage = (
                 float(remaining_seconds) / initial_seconds) * 100
 
-            is_ticking = POMODORO.is_ticking()
+            is_ticking = Globals.POMODORO.is_ticking()
             icon = "bi bi-play-circle-fill"
             if is_ticking:
                 icon = "bi bi-stop-circle-fill"
                 disable_button = False
                 disable_category_dropdown = True
-
-            return f'{category}: {remaining_time}', progress_percentage, icon, disable_button, disable_category_dropdown
+            category_str = f'{category}: {remaining_time}'
+            return category_str, progress_percentage, icon, disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
         else:
-            return 0, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown
+            return 0, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
 
     @app.callback(
         Output("category-choice-modal", "is_open"),
@@ -95,8 +113,6 @@ def get_callbacks(app):
             input_value,
             is_open):
 
-        global CATEGORIES
-
         # which component has triggered the callback?
         trigger = ctx.triggered_id
 
@@ -117,8 +133,8 @@ def get_callbacks(app):
             new_values = [val for val in drop_value if val != NEW_CATEGORY]
             new_values.append(input_value)
 
-            if input_value not in CATEGORIES:
-                CATEGORIES.insert(-1, input_value)
+            if input_value not in Globals.CATEGORIES:
+                Globals.CATEGORIES.insert(-1, input_value)
 
             return not is_open, new_options, new_values
 
