@@ -3,6 +3,7 @@ from dash import Input, Output, State, ctx
 
 from src.Pomodoro import *
 from src.utils.db import *
+from src.globals import *
 
 from src.dashboard.widgets.timer_button import *
 from src.dashboard.widgets.timer_countdown import *
@@ -17,17 +18,16 @@ def get_callbacks(app):
         prevent_initial_call=True,
     )
     def toggle_play(n_clicks, selected_category):
-        global POMODORO
         is_ticking = False
-        if POMODORO is not None:
-            is_ticking = POMODORO.is_ticking()
+        if Globals.POMODORO is not None:
+            is_ticking = Globals.POMODORO.is_ticking()
 
         if is_ticking:
-            POMODORO.stop()
+            Globals.POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            selected_timer = TimerType.PAUSE  # TODO: switch between pomodori and pauses
-            POMODORO = Pomodoro(selected_timer, 20, selected_category)
+            selected_timer = TimerType.POMODORO  # TODO: switch between pomodori and pauses
+            Globals.POMODORO = Pomodoro(selected_timer, 20, selected_category)
             return "bi bi-stop-circle-fill"
 
     # Callback per disabilitare il pulsante quando selected_category è None
@@ -50,21 +50,21 @@ def get_callbacks(app):
         prevent_initial_call=True,
     )
     def update_timer(n, button_disabled_state):
-        global POMODORO
+        print(Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK)
         is_ticking = False
         disable_button = button_disabled_state
         disable_category_dropdown = False
-        if POMODORO is not None:
-            remaining_seconds = POMODORO.duration
-            category = POMODORO.category
-            initial_seconds = POMODORO.initial_duration
+        if Globals.POMODORO is not None:
+            remaining_seconds = Globals.POMODORO.duration
+            category = Globals.POMODORO.category
+            initial_seconds = Globals.POMODORO.initial_duration
 
             remaining_time = str(datetime.timedelta(seconds=remaining_seconds))
 
             progress_percentage = (
                 float(remaining_seconds) / initial_seconds) * 100
 
-            is_ticking = POMODORO.is_ticking()
+            is_ticking = Globals.POMODORO.is_ticking()
             icon = "bi bi-play-circle-fill"
             if is_ticking:
                 icon = "bi bi-stop-circle-fill"
@@ -95,8 +95,6 @@ def get_callbacks(app):
             input_value,
             is_open):
 
-        global CATEGORIES
-
         # which component has triggered the callback?
         trigger = ctx.triggered_id
 
@@ -117,8 +115,8 @@ def get_callbacks(app):
             new_values = [val for val in drop_value if val != NEW_CATEGORY]
             new_values.append(input_value)
 
-            if input_value not in CATEGORIES:
-                CATEGORIES.insert(-1, input_value)
+            if input_value not in Globals.CATEGORIES:
+                Globals.CATEGORIES.insert(-1, input_value)
 
             return not is_open, new_options, new_values
 
@@ -150,22 +148,20 @@ def get_callbacks(app):
         ]
     )
     def update_obiettivo(d, w):
-        # Simula la logica del programma per ottenere il valore dell'obiettivo
-        obiettivo_giornaliero = "30/10"
-        obiettivo_settimanale = "180/35"
         day_c = {'color': 'green'}
         week_c = {'color': 'green'}
-        try:
-            obiettivo_giornaliero, totale_day = map(int, obiettivo_giornaliero.split('/'))
-            obiettivo_settimanale, totale_week = map(int, obiettivo_settimanale.split('/'))
-
-            if obiettivo_giornaliero >= totale_day:
-                day_c = {'color': 'green'}
-            if obiettivo_settimanale >= totale_week:
-                week_c = {'color': 'green'}
-        except Exception as e:
-            print(str(e))
-            return obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
+        
+        daily_target = 5
+        weekly_target = 10
+        
+        print(Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK)
+        if Globals.POMODORI_TODAY >= daily_target:
+            day_c = {'color': 'green'}
+        if Globals.POMODORI_LAST_WEEK >= weekly_target:
+            week_c = {'color': 'green'}
+        
+        obiettivo_giornaliero = str(Globals.POMODORI_TODAY) + "/" + str(daily_target)
+        obiettivo_settimanale = str(Globals.POMODORI_LAST_WEEK) + "/" + str(weekly_target)
         
         return obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
         

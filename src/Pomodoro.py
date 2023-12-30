@@ -3,9 +3,7 @@ import threading
 from enum import Enum
 
 from src.utils.db import *
-
-POMODORO = None
-
+from src.globals import *
 
 class TimerType(Enum):
     POMODORO = 1
@@ -53,6 +51,9 @@ class Pomodoro:
 
     def __start(self):
         log("INFO", f"Start pomodoro ({self})")
+        
+        Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK = count_past_pomodori()
+        
         if self.timer_type == TimerType.POMODORO:
             self.db_id = insert_pomodoro(
                 self._duration,

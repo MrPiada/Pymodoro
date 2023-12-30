@@ -207,7 +207,7 @@ def count_past_pomodori():
         FROM pomodori
         WHERE start BETWEEN ? AND ?
     ''', (today_start, today_stop))
-    rows_today = cursor.fetchone()[0]
+    pomodori_today = cursor.fetchone()[0]
 
     # Conta le righe per l'ultima settimana
     last_week_start = time.strftime('%Y-%m-%d 00:00:00', time.localtime(time.time() - 7 * 24 * 60 * 60))
@@ -217,8 +217,8 @@ def count_past_pomodori():
         FROM pomodori
         WHERE start BETWEEN ? AND ?
     ''', (last_week_start, last_week_stop))
-    rows_last_week = cursor.fetchone()[0]
+    pomodori_last_week = cursor.fetchone()[0]
 
     conn.close()
 
-    return rows_today, rows_last_week
+    return pomodori_today, pomodori_last_week
