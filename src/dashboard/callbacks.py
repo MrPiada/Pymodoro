@@ -3,7 +3,7 @@ from dash import Input, Output, State, ctx
 
 from src.Pomodoro import *
 from src.utils.db import *
-from src.utils.timer_utils import get_next_tymer_type
+from src.utils.timer_utils import *
 from src.globals import *
 
 from src.dashboard.widgets.timer_button import *
@@ -45,6 +45,7 @@ def get_callbacks(app):
         [
             Output('timer-display', 'children'),
             Output('progress-bar', 'value'),
+            Output('progress-bar', 'color'),
             Output("play-icon", "className", allow_duplicate=True),
             Output("timer-button", "disabled", allow_duplicate=True),
             Output("category-dropdown", "disabled", allow_duplicate=True),
@@ -83,6 +84,7 @@ def get_callbacks(app):
 
             progress_percentage = (
                 float(remaining_seconds) / initial_seconds) * 100
+            color = get_timer_color(Globals.POMODORO.timer_type)
 
             is_ticking = Globals.POMODORO.is_ticking()
             icon = "bi bi-play-circle-fill"
@@ -91,9 +93,10 @@ def get_callbacks(app):
                 disable_button = False
                 disable_category_dropdown = True
             category_str = f'{category}: {remaining_time}'
-            return category_str, progress_percentage, icon, disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
+
+            return category_str, progress_percentage, color, icon, disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
         else:
-            return 0, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
+            return 0, None, None, "bi bi-play-circle-fill", disable_button, disable_category_dropdown, obiettivo_giornaliero, day_c, obiettivo_settimanale, week_c
 
     @app.callback(
         Output("category-choice-modal", "is_open"),
