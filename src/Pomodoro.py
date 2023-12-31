@@ -1,22 +1,15 @@
 import time
 import threading
-from enum import Enum
 
 from src.utils.db import *
 from src.globals import *
 
 
-class TimerType(Enum):
-    POMODORO = 1
-    PAUSE = 2
-    LONG_PAUSE = 3
-
-
 class Pomodoro:
-    def __init__(self, timer_type, duration, category, sub_category=None):
+    def __init__(self, _timer_type, duration, category, sub_category=None):
         self.initial_duration = duration  # seconds
         self._duration = duration
-        self.timer_type = timer_type
+        self._timer_type = _timer_type
         self.timer_thread = None
         self.stop_timer = False
         self._category = category
@@ -28,7 +21,7 @@ class Pomodoro:
 
     def __str__(self):
         return (
-            f"Pomodoro(timer_type={self.timer_type.name}, "
+            f"Pomodoro(_timer_type={self._timer_type.name}, "
             f"duration={self._duration}s, "
             f"category={self.category}, "
             f"sub_category={self.sub_category})"
@@ -51,6 +44,10 @@ class Pomodoro:
     def sub_category(self):
         return self._sub_category
 
+    @property
+    def timer_type(self):
+        return self._timer_type
+
     def is_ticking(self):
         return self._duration > 0
 
@@ -59,7 +56,7 @@ class Pomodoro:
 
         Globals.POMODORI_TODAY, Globals.POMODORI_LAST_WEEK = count_past_pomodori()
 
-        if self.timer_type == TimerType.POMODORO:
+        if self._timer_type == TimerType.POMODORO:
             self.db_id = insert_pomodoro(
                 self._duration,
                 self.category,
@@ -70,7 +67,7 @@ class Pomodoro:
             self.db_id = insert_pause(
                 self._duration,
                 self.category,
-                self.timer_type.name)
+                self._timer_type.name)
             self.timer_thread = threading.Thread(target=self._run_timer)
             self.timer_thread.start()
 
@@ -81,7 +78,7 @@ class Pomodoro:
         self._duration = 0
         log("INFO", f"Stop pomodoro ({self})")
 
-        if self.timer_type == TimerType.POMODORO:
+        if self._timer_type == TimerType.POMODORO:
             update_pomodoro_stop_time(self.db_id)
         else:
             update_pause_stop_time(self.db_id)
