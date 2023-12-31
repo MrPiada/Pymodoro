@@ -1,15 +1,8 @@
 import time
 import threading
-from enum import Enum
 
 from src.utils.db import *
 from src.globals import *
-
-
-class TimerType(Enum):
-    POMODORO = 1
-    PAUSE = 2
-    LONG_PAUSE = 3
 
 
 class Pomodoro:

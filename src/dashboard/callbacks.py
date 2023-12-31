@@ -3,6 +3,7 @@ from dash import Input, Output, State, ctx
 
 from src.Pomodoro import *
 from src.utils.db import *
+from src.utils.timer_utils import get_next_tymer_type
 from src.globals import *
 
 from src.dashboard.widgets.timer_button import *
@@ -26,8 +27,9 @@ def get_callbacks(app):
             Globals.POMODORO.stop()
             return "bi bi-play-circle-fill"
         else:
-            selected_timer = TimerType.POMODORO  # TODO: switch between pomodori and pauses
+            selected_timer = Globals.NEXT_TIMER_TYPE
             Globals.POMODORO = Pomodoro(selected_timer, 20, selected_category)
+            Globals.NEXT_TIMER_TYPE = get_next_tymer_type(selected_timer)
             return "bi bi-stop-circle-fill"
 
     # Callback per disabilitare il pulsante quando selected_category è None
