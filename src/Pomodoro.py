@@ -1,7 +1,7 @@
 import time
 import threading
 
-from src.utils.db import *
+from src.db import *
 from src.globals import *
 
 

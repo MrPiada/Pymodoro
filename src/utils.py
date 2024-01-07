@@ -1,5 +1,5 @@
-from src.globals import Globals
 from src.Pomodoro import TimerType
+import json
 
 
 def get_next_tymer_type(timer_type):
@@ -20,3 +20,11 @@ def get_timer_color(timer_type):
     }
 
     return switch_dict.get(timer_type, None)
+
+
+def dict_to_string(d):
+    return json.dumps(d)
+
+
+def string_to_dict(str):
+    return json.loads(str)

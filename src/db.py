@@ -160,6 +160,27 @@ def insert_config(option, value):
     conn.close()
 
 
+def read_config():
+    conn = sqlite3.connect(DB_FILE_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT option, value FROM config')
+    config_data = cursor.fetchall()
+    conn.close()
+    return config_data
+
+
+def update_config(option, new_value):
+    conn = sqlite3.connect(DB_FILE_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''
+    UPDATE config
+    SET value = ?
+    WHERE option = ?
+    ''', (new_value, option))
+    conn.commit()
+    conn.close()
+
+
 def insert_random_pause_category(category, daily_limit):
     conn = sqlite3.connect(DB_FILE_PATH)
     cursor = conn.cursor()

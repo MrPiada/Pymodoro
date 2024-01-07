@@ -1,3 +1,4 @@
+from src.utils import *
 import dash
 from dash import html, dcc
 from dash.dependencies import Input, Output
@@ -8,25 +9,23 @@ from src.dashboard.style import *
 from src.dashboard.timer import *
 from src.dashboard.stats import *
 from src.dashboard.config import *
-from src.utils.db import *
+from src.db import *
 from src.globals import *
 
 # Call the setupdb function to initialize the database
 setupdb()
 log("INFO", "STARTUP")
 
-# # Example usage:
-# insert_pomodoro(
-#     "13:02 8/12/2023",
-#     "13:27 8/12/2023",
-#     25,
-#     "Issue",
-#     "#321 pelloide")
-# insert_pause("13:02 8/12/2023", "13:17 8/12/2023", 15, "coffe")
-# insert_config("username", "Ciccio")
-# insert_random_pause_category("scacchi", 3)
-# insert_random_pause_category("reading", 5)
-# insert_obiettivi("daily", 1, 10)
+
+pause_categories = {
+    "scacchi": 3,
+    "push_up": 2,
+    "pull_up": 1,
+    "planck": 2,
+    "reading": 2,
+    "youtube": 1
+}
+insert_config('pippo', dict_to_string(pause_categories))
 
 
 app = dash.Dash(

@@ -2,8 +2,8 @@ import datetime
 from dash import Input, Output, State, ctx
 
 from src.Pomodoro import *
-from src.utils.db import *
-from src.utils.timer_utils import *
+from src.db import *
+from src.utils import *
 from src.globals import *
 
 from src.dashboard.widgets.timer_button import *
