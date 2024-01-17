@@ -34,9 +34,9 @@ app = dash.Dash(
 )
 
 tabs = dbc.Tabs([
-    dbc.Tab(label='Timer', tab_id='timer', children=timer_tab),
-    dbc.Tab(label='Stats', tab_id='stats', children=stats_tab),
-    dbc.Tab(label='Config', tab_id='config', children=config_tab),
+    dbc.Tab(label='Timer ⏱️', tab_id='timer', children=timer_tab),
+    dbc.Tab(label='Stats 📊', tab_id='stats', children=stats_tab),
+    dbc.Tab(label='Config ⚙️', tab_id='config', children=config_tab, tab_style={"marginLeft": "auto"}),
 ], id='tabs', active_tab='timer')
 
 app.layout = html.Div([
