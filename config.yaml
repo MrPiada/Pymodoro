@@ -1,18 +1,17 @@
-config:
- pauses:
-    - scacchi: 3
-    - training: 1
-    - reading: 1
-    - coffe: 2
+pauses:
+  - scacchi: 3
+  - training: 1
+  - reading: 1
+  - coffe: 2
 
- timers:
-    pomodoro: 25
-    short_pause: 5
-    long_pause: 15
-    pause_ratio: 3 #3:1 short:long
-    
- goals:
-    daily: 10
-    weekly: 45
-    monthly: 150
-    yearly: 1000
+timers:
+  pomodoro: 25
+  short_pause: 5
+  long_pause: 15
+  pause_ratio: 3 #3:1 short:long
+  
+goals:
+  daily: 10
+  weekly: 45
+  monthly: 150
+  yearly: 1000
