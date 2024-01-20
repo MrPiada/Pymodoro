@@ -15,16 +15,6 @@ from src.globals import *
 setupdb()
 log("INFO", "STARTUP")
 
-pause_categories = {
-    "scacchi": 3,
-    "push_up": 2,
-    "pull_up": 1,
-    "planck": 2,
-    "reading": 2,
-    "youtube": 1
-}
-insert_config('pippo', dict_to_string(pause_categories))
-
 app = dash.Dash(
     __name__,
     external_stylesheets=[
@@ -33,11 +23,19 @@ app = dash.Dash(
     title='PyModoro'
 )
 
-tabs = dbc.Tabs([
-    dbc.Tab(label='Timer ⏱️', tab_id='timer', children=timer_tab),
-    dbc.Tab(label='Stats 📊', tab_id='stats', children=stats_tab),
-    dbc.Tab(label='Config ⚙️', tab_id='config', children=config_tab, tab_style={"marginLeft": "auto"}),
-], id='tabs', active_tab='timer')
+tabs = dbc.Tabs([dbc.Tab(label='Timer ⏱️',
+                         tab_id='timer',
+                         children=timer_tab),
+                 dbc.Tab(label='Stats 📊',
+                         tab_id='stats',
+                         children=stats_tab),
+                 dbc.Tab(label='Config ⚙️',
+                         tab_id='config',
+                         children=config_tab,
+                         tab_style={"marginLeft": "auto"}),
+                 ],
+                id='tabs',
+                active_tab='timer')
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),

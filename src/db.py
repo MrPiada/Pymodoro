@@ -36,14 +36,6 @@ def setupdb():
     )
     ''')
 
-    # Create the 'config' table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS config (
-        option TEXT PRIMARY KEY,
-        value TEXT
-    )
-    ''')
-
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS random_pause_categories (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -145,38 +137,6 @@ def update_pause_stop_time(pomodoro_id):
     WHERE id = ?
     ''', (stop, pomodoro_id))
 
-    conn.commit()
-    conn.close()
-
-
-def insert_config(option, value):
-    conn = sqlite3.connect(DB_FILE_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-    INSERT OR REPLACE INTO config (option, value)
-    VALUES (?, ?)
-    ''', (option, value))
-    conn.commit()
-    conn.close()
-
-
-def read_config():
-    conn = sqlite3.connect(DB_FILE_PATH)
-    cursor = conn.cursor()
-    cursor.execute('SELECT option, value FROM config')
-    config_data = cursor.fetchall()
-    conn.close()
-    return config_data
-
-
-def update_config(option, new_value):
-    conn = sqlite3.connect(DB_FILE_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-    UPDATE config
-    SET value = ?
-    WHERE option = ?
-    ''', (new_value, option))
     conn.commit()
     conn.close()
 
